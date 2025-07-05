@@ -4,10 +4,17 @@ const sqlite3 = require('sqlite3').verbose();
 const cors = require('cors');
 
 const app = express();
-const port = 3000;
+
+// ✅ Use dynamic port for Render
+const port = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(bodyParser.json());
+
+// ✅ Root route for testing on Render
+app.get('/', (req, res) => {
+  res.send('✅ Backend is live on Render!');
+});
 
 // Connect to SQLite DB
 const db = new sqlite3.Database('./users.db');
@@ -26,7 +33,7 @@ db.run(`
   )
 `);
 
-// Register route (with all fields & error handling)
+// Register route
 app.post('/register', (req, res) => {
   const { name, email, password, username, mobile, address, social } = req.body;
 
@@ -114,7 +121,7 @@ app.delete('/user/:email', (req, res) => {
   });
 });
 
-// Start the server
+// ✅ Start the server
 app.listen(port, () => {
-  console.log(`🚀 Server running at http://localhost:${port}`);
+  console.log(`🚀 Server running on port ${port}`);
 });
