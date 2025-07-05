@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Register Page</title>
+  <style>
+    body {
+      background-color: #c19fbb;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      font-family: Arial, sans-serif;
+    }
+    .box {
+      background: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      width: 400px;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    .checkbox {
+      display: flex;
+      align-items: center;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+    .checkbox input {
+      margin-right: 5px;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .register-btn {
+      background-color: #4caf50;
+      color: white;
+    }
+    .google-btn {
+      background-color: #4285f4;
+      color: white;
+    }
+    .login-link {
+      text-align: center;
+      margin-top: 15px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h2>Register</h2>
+    <input type="text" id="name" placeholder="Full Name">
+    <input type="text" id="username" placeholder="Username">
+    <input type="text" id="mobile" placeholder="Mobile Number">
+    <input type="text" id="address" placeholder="Address">
+    <input type="email" id="email" placeholder="Email">
+    <input type="password" id="password" placeholder="Password">
+    <div class="checkbox">
+      <input type="checkbox" onclick="togglePassword()"> Show Password
+    </div>
+    <input type="text" id="social" placeholder="Social Media Handle">
+    <button class="register-btn" onclick="register()">Register</button>
+    <button class="google-btn" onclick="alert('Google login not implemented')">Continue with Google</button>
+    <div class="login-link">
+      Already have an account? <a href="login.html">Login</a>
+    </div>
+  </div>
+
+  <script>
+    function togglePassword() {
+      const pwd = document.getElementById("password");
+      pwd.type = pwd.type === "password" ? "text" : "password";
+    }
+
+    function register() {
+      const data = {
+        name: document.getElementById("name").value,
+        username: document.getElementById("username").value,
+        mobile: document.getElementById("mobile").value,
+        address: document.getElementById("address").value,
+        email: document.getElementById("email").value,
+        password: document.getElementById("password").value,
+        social: document.getElementById("social").value
+      };
+
+      fetch("http://localhost:3000/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      })
+      .then(res => res.json())
+      .then(response => {
+        if (response.message === "User registered successfully.") {
+          alert("Registration successful!");
+          window.location.href = "login.html";
+        } else {
+          alert(response.message);
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        alert("Registration failed");
+      });
+    }
+  </script>
+</body>
+</html>

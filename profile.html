@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Profile Page</title>
+  <style>
+    body {
+      background-color: #c19fbb;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      font-family: Arial, sans-serif;
+    }
+    .container {
+      background-color: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+      width: 400px;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #333;
+    }
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 10px;
+      margin-bottom: 5px;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .save-btn {
+      background-color: #4caf50;
+      color: white;
+    }
+    .logout-btn {
+      background-color: #e53935;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>User Profile</h2>
+
+    <label for="name">Full Name</label>
+    <input type="text" id="name">
+
+    <label for="username">Username</label>
+    <input type="text" id="username">
+
+    <label for="mobile">Mobile Number</label>
+    <input type="text" id="mobile">
+
+    <label for="address">Address</label>
+    <textarea id="address" rows="3"></textarea>
+
+    <label for="email">Email</label>
+    <input type="email" id="email" readonly>
+
+    <label for="password">Password</label>
+    <input type="password" id="password">
+
+    <label for="social">Social Media Handle</label>
+    <input type="text" id="social">
+
+    <button class="save-btn" onclick="saveProfile()">Save Profile</button>
+    <button class="logout-btn" onclick="logout()">Logout</button>
+  </div>
+
+  <script>
+    const email = localStorage.getItem("loggedInEmail");
+    if (!email) {
+      alert("You must log in first.");
+      window.location.href = "login.html";
+    }
+
+    // Fetch profile data
+    fetch(`http://localhost:3000/user/${email}`)
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById("name").value = data.name || '';
+        document.getElementById("username").value = data.username || '';
+        document.getElementById("mobile").value = data.mobile || '';
+        document.getElementById("address").value = data.address || '';
+        document.getElementById("email").value = data.email || '';
+        document.getElementById("password").value = data.password || '';
+        document.getElementById("social").value = data.social || '';
+      });
+
+    // Save updated profile
+    function saveProfile() {
+      const updated = {
+        name: document.getElementById("name").value,
+        username: document.getElementById("username").value,
+        mobile: document.getElementById("mobile").value,
+        address: document.getElementById("address").value,
+        password: document.getElementById("password").value,
+        social: document.getElementById("social").value
+      };
+
+      fetch(`http://localhost:3000/user/${email}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updated)
+      })
+      .then(res => res.json())
+      .then(data => {
+        alert("Profile updated successfully!");
+      })
+      .catch(err => {
+        console.error(err);
+        alert("Error saving profile.");
+      });
+    }
+
+    function logout() {
+      localStorage.removeItem("loggedInEmail");
+      window.location.href = "login.html";
+    }
+  </script>
+</body>
+</html>
